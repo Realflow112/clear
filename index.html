@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>System Shield & Cleanup UI Pro</title>
+    <title>System Shield & Cleanup Pro v3.0</title>
     <style>
         :root {
             --bg-color: #0b0f19;
@@ -111,9 +111,6 @@
             box-shadow: 0 0 25px rgba(255, 51, 102, 0.7);
             transform: translateY(-2px);
         }
-        .action-btn:active {
-            transform: translateY(0);
-        }
         .console-box {
             margin-top: 20px;
             background: #05070c;
@@ -133,11 +130,11 @@
 
 <div class="container">
     <h1>SYSTEM SHIELD CLEANER</h1>
-    <div class="subtitle">Auto-Cleanup & Anti-Trace Execution Module v2.2 (Pro)</div>
+    <div class="subtitle">Ultimate 21-Categories Green Fixer v3.0</div>
 
     <div class="checklist-grid" id="grid"></div>
 
-    <button class="action-btn" id="runBtn" onclick="executeCleanup()">EXECUTE CLEANUP & SELF-DESTRUCT</button>
+    <button class="action-btn" id="runBtn" onclick="executeCleanup()">GENERATE ULTIMATE FIX SCRIPT</button>
     <div class="console-box" id="consoleBox"></div>
 </div>
 
@@ -170,51 +167,35 @@
     function executeCleanup() {
         const btn = document.getElementById('runBtn');
         btn.disabled = true;
-        btn.innerText = "CLEANING & PURGING...";
+        btn.innerText = "GENERATING SCRIPT...";
         
         let currentIndex = 0;
         const interval = setInterval(() => {
             if (currentIndex < items.length) {
                 const dot = document.getElementById(`dot-${currentIndex}`);
                 dot.classList.add('active');
-                logToConsole(`Purged artifact group: [${items[currentIndex]}] successfully.`);
+                logToConsole(`Optimizing module: [${items[currentIndex]}] prepared.`);
                 currentIndex++;
             } else {
                 clearInterval(interval);
-                logToConsole("All 21 modules cleaned. Generating ultimate PowerShell script...");
+                logToConsole("All 21 modules mapped. Generating AutoFix_Ultimate.ps1...");
                 
                 generateAndDownloadPS1();
 
                 setTimeout(() => {
-                    btn.innerText = "SYSTEM SECURED & SELF-DESTRUCTED";
-                    logToConsole("Execution package downloaded. Run it with Administrator rights.");
+                    btn.innerText = "SCRIPT DOWNLOADED SUCCESSFULLY";
+                    logToConsole("Run the downloaded script as Administrator to make all green!");
                 }, 1000);
             }
-        }, 120);
+        }, 100);
     }
 
     function generateAndDownloadPS1() {
         const psScript = `
-# ปิดโปรแกรม CheckCMD ทันทีเพื่อปลดล็อกไฟล์ฐานข้อมูล
+# ปิดโปรแกรม CheckCMD ทันทีเพื่อปลดล็อกไฟล์ฐานข้อมูลแคช
 Get-Process -Name "CheckCMD" -ErrorAction SilentlyContinue | Stop-Process -Force
 
-# 1. กวาดล้างแคช โฟลเดอร์ฐานข้อมูล และ WebView2 ของ CheckCMD ทุกจุด
-$Targets = @(
-    "$env:USERPROFILE\\Downloads\\CheckCMD",
-    "$env:USERPROFILE\\Desktop\\CheckCMD",
-    "$env:LOCALAPPDATA\\CheckCMD",
-    "C:\\Users\\Administrator\\Downloads\\CheckCMD",
-    "C:\\Users\\Administrator\\Desktop\\CheckCMD",
-    "C:\\Users\\Administrator\\AppData\\Local\\CheckCMD"
-)
-foreach ($Path in $Targets) {
-    if (Test-Path $Path) {
-        Remove-Item $Path -Force -Recurse -ErrorAction SilentlyContinue
-    }
-}
-Get-ChildItem -Path "C:\\Users\\Administrator" -Recurse -Filter "EBWebView" -Directory -ErrorAction SilentlyContinue | Remove-Item -Force -Recurse -ErrorAction SilentlyContinue
-
-# 2. แก้ปัญหาประวัติ PowerShell (สร้างประวัติธรรมชาติกลบความผิดปกติ)
+# 1. แก้ไขหมวด History PowerShell และ Reflective Loading (สร้างประวัติธรรมชาติกลบความผิดปกติ)
 $historyPath = "$env:APPDATA\\Microsoft\\Windows\\PowerShell\\PSReadLine\\ConsoleHost_history.txt"
 $historyDir = Split-Path $historyPath -Parent
 if (!(Test-Path $historyDir)) { New-Item -ItemType Directory -Path $historyDir -Force | Out-Null }
@@ -228,19 +209,35 @@ $naturalCommands = @(
 $simulatedHistory = Get-Random -InputObject $naturalCommands -Count 8
 Set-Content -Path $historyPath -Value $simulatedHistory -Force
 
+# 2. ลบเฉพาะแคชไฟล์ขยะและ Log ของ CheckCMD (ไม่ลบตัวโปรแกรม)
+$Targets = @(
+    "$env:USERPROFILE\\Downloads\\CheckCMD",
+    "$env:USERPROFILE\\Desktop\\CheckCMD",
+    "$env:LOCALAPPDATA\\CheckCMD",
+    "C:\\Users\\Administrator\\Downloads\\CheckCMD",
+    "C:\\Users\\Administrator\\Desktop\\CheckCMD",
+    "C:\\Users\\Administrator\\AppData\\Local\\CheckCMD"
+)
+foreach ($Path in $Targets) {
+    if (Test-Path $Path) {
+        Remove-Item "$Path\\*.log" -Force -Recurse -ErrorAction SilentlyContinue
+        Remove-Item "$Path\\*.json" -Force -Recurse -ErrorAction SilentlyContinue
+        Remove-Item "$Path\\*.db" -Force -Recurse -ErrorAction SilentlyContinue
+        Remove-Item "$Path\\CheckCMD.exe.WebView2" -Force -Recurse -ErrorAction SilentlyContinue
+    }
+}
+Get-ChildItem -Path "C:\\Users\\Administrator" -Recurse -Filter "EBWebView" -Directory -ErrorAction SilentlyContinue | Remove-Item -Force -Recurse -ErrorAction SilentlyContinue
+
 # 3. ล้างค่า USN Journal เพื่อลบประวัติการแก้ไขไฟล์เบื้องหลัง
 fsutil usn deletejournal /d C: 2>$null
 fsutil usn createjournal m=1000 a=100 C: 2>$null
 
-# 4. ล้างถังขยะ, Prefetch และ Temp ทั้งหมด
-Clear-RecycleBin -Force -ErrorAction SilentlyContinue
-Remove-Item "$env:SystemRoot\\Prefetch\\*" -Force -Recurse -ErrorAction SilentlyContinue
+# 4. ล้าง Prefetch และ Temp ทั้งหมด
+Remove-Item "$env:SystemRoot\\Prefetch\\*" -Force -ErrorAction SilentlyContinue
 Remove-Item "$env:TEMP\\*" -Force -Recurse -ErrorAction SilentlyContinue
 
-# 5. ล้างประวัติ Recent Files และโฟลเดอร์ AutomaticDestinations
+# 5. ล้างประวัติ Recent Files
 Remove-Item "$env:APPDATA\\Microsoft\\Windows\\Recent\\*" -Force -Recurse -ErrorAction SilentlyContinue
-Remove-Item "$env:APPDATA\\Microsoft\\Windows\\Recent\\AutomaticDestinations\\*" -Force -Recurse -ErrorAction SilentlyContinue
-Remove-Item "$env:APPDATA\\Microsoft\\Windows\\Recent\\CustomDestinations\\*" -Force -Recurse -ErrorAction SilentlyContinue
 
 # 6. ลบไฟล์สคริปต์นี้ทิ้งทันทีหลังรันเสร็จ (Self-Destruct)
 Remove-Item $MyInvocation.MyCommand.Path -Force -ErrorAction SilentlyContinue
@@ -249,7 +246,7 @@ Remove-Item $MyInvocation.MyCommand.Path -Force -ErrorAction SilentlyContinue
         const blob = new Blob([psScript], { type: 'text/plain;charset=utf-8' });
         const link = document.createElement('a');
         link.href = window.URL.createObjectURL(blob);
-        link.download = 'AutoClean_Pro.ps1';
+        link.download = 'AutoFix_Ultimate.ps1';
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
