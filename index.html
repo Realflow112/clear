@@ -2,255 +2,136 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>System Shield & Cleanup Pro v3.0</title>
+    <title>Windows Log Size Monitor</title>
     <style>
-        :root {
-            --bg-color: #0b0f19;
-            --panel-bg: #131b2e;
-            --accent-red: #ff3366;
-            --accent-blue: #00f0ff;
-            --text-main: #e2e8f0;
-            --text-muted: #94a3b8;
-        }
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
         body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
+            background-color: #0d1117;
+            color: #c9d1d9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            overflow-x: hidden;
+            height: 100vh;
+            margin: 0;
         }
-        .container {
-            width: 100%;
-            max-width: 650px;
-            background: var(--panel-bg);
-            border: 1px solid rgba(0, 240, 255, 0.2);
-            border-radius: 16px;
-            box-shadow: 0 0 30px rgba(0, 240, 255, 0.1);
+        .card {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
             padding: 30px;
-            position: relative;
+            width: 400px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
         }
-        h1 {
-            display: block;
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--accent-blue);
-            margin-bottom: 5px;
-            text-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
+        h2 {
+            margin-top: 0;
+            color: #58a6ff;
+            font-size: 20px;
+            text-align: center;
         }
-        .subtitle {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            margin-bottom: 25px;
+        .log-item {
+            margin-bottom: 20px;
         }
-        .checklist-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 25px;
-            max-height: 280px;
-            overflow-y: auto;
-            padding-right: 5px;
-        }
-        .checklist-grid::-webkit-scrollbar {
-            width: 6px;
-        }
-        .checklist-grid::-webkit-scrollbar-thumb {
-            background: rgba(0, 240, 255, 0.3);
-            border-radius: 3px;
-        }
-        .check-item {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 10px 14px;
-            border-radius: 8px;
-            font-size: 0.85rem;
+        .log-header {
             display: flex;
-            align-items: center;
             justify-content: space-between;
+            font-size: 14px;
+            margin-bottom: 6px;
         }
-        .check-item span {
-            color: var(--text-muted);
+        .progress-bar {
+            background-color: #21262d;
+            border-radius: 6px;
+            height: 12px;
+            overflow: hidden;
+            border: 1px solid #30363d;
         }
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--accent-red);
-            box-shadow: 0 0 8px var(--accent-red);
+        .progress-fill {
+            background-color: #238636;
+            height: 100%;
+            width: 0%;
+            transition: width 0.4s ease;
         }
-        .status-dot.active {
-            background: #00ff66;
-            box-shadow: 0 0 8px #00ff66;
-        }
-        .action-btn {
-            width: 100%;
-            background: linear-gradient(135deg, var(--accent-red), #ff0055);
+        .btn {
+            background-color: #238636;
             color: white;
             border: none;
-            padding: 14px;
-            font-size: 1rem;
-            font-weight: bold;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 15px rgba(255, 51, 102, 0.4);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .action-btn:hover {
-            opacity: 0.9;
-            box-shadow: 0 0 25px rgba(255, 51, 102, 0.7);
-            transform: translateY(-2px);
-        }
-        .console-box {
-            margin-top: 20px;
-            background: #05070c;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 10px 16px;
             border-radius: 6px;
-            padding: 12px;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 0.75rem;
-            color: var(--accent-blue);
-            height: 100px;
-            overflow-y: auto;
-            display: none;
+            width: 100%;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn:hover {
+            background-color: #2ea043;
+        }
+        .info {
+            font-size: 12px;
+            color: #8b949e;
+            text-align: center;
+            margin-top: 15px;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>SYSTEM SHIELD CLEANER</h1>
-    <div class="subtitle">Ultimate 21-Categories Green Fixer v3.0</div>
+<div class="card">
+    <h2>📊 Windows Log Size Monitor</h2>
+    
+    <div class="log-item">
+        <div class="log-header">
+            <span>Application.evtx</span>
+            <span id="app-size">Loading...</span>
+        </div>
+        <div class="progress-bar">
+            <div id="app-bar" class="progress-fill" style="width: 45%;"></div>
+        </div>
+    </div>
 
-    <div class="checklist-grid" id="grid"></div>
+    <div class="log-item">
+        <div class="log-header">
+            <span>System.evtx</span>
+            <span id="sys-size">Loading...</span>
+        </div>
+        <div class="progress-bar">
+            <div id="sys-bar" class="progress-fill" style="width: 60%;"></div>
+        </div>
+    </div>
 
-    <button class="action-btn" id="runBtn" onclick="executeCleanup()">GENERATE ULTIMATE FIX SCRIPT</button>
-    <div class="console-box" id="consoleBox"></div>
+    <div class="log-item">
+        <div class="log-header">
+            <span>Security.evtx</span>
+            <span id="sec-size">Loading...</span>
+        </div>
+        <div class="progress-bar">
+            <div id="sec-bar" class="progress-fill" style="width: 30%;"></div>
+        </div>
+    </div>
+
+    <button class="btn" onclick="refreshData()">รีเฟรชขนาดข้อมูล</button>
+    <div class="info">จำลองโควตามาตรฐาน: 20,000 KB ต่อไฟล์</div>
 </div>
 
 <script>
-    const items = [
-        "01 History PowerShell", "02 Windows Install", "03 Downloads", 
-        "04 Log PowerShell", "05 Log Download", "06 Browser History", 
-        "07 Scan log", "08 Scan DLL Injector", "09 Scan File", 
-        "10 Log Windows", "11 Reflective Loading", "12 History Event Logs", 
-        "13 Log การเปิดเครื่อง", "14 Suspicious Process", "15 DMA Scanner", 
-        "16 Check Reshade", "17 Check Flashdrive", "18 Log การลบไฟล์", 
-        "19 Scan Memory", "20 Check Embed DLL", "21 SID Cheat Check"
-    ];
-
-    const grid = document.getElementById('grid');
-    items.forEach((item, index) => {
-        const div = document.createElement('div');
-        div.className = 'check-item';
-        div.innerHTML = `<span>${item}</span><div class="status-dot" id="dot-${index}"></div>`;
-        grid.appendChild(div);
-    });
-
-    function logToConsole(text) {
-        const box = document.getElementById('consoleBox');
-        box.style.display = 'block';
-        box.innerHTML += `> ${text}<br>`;
-        box.scrollTop = box.scrollHeight;
-    }
-
-    function executeCleanup() {
-        const btn = document.getElementById('runBtn');
-        btn.disabled = true;
-        btn.innerText = "GENERATING SCRIPT...";
+    function refreshData() {
+        // จำลองค่าขนาด KB เพื่อให้เห็นการทำงานของสเกลกราฟ (โควตาเต็มที่ 20MB หรือ 20,480 KB)
+        const maxQuota = 20480;
         
-        let currentIndex = 0;
-        const interval = setInterval(() => {
-            if (currentIndex < items.length) {
-                const dot = document.getElementById(`dot-${currentIndex}`);
-                dot.classList.add('active');
-                logToConsole(`Optimizing module: [${items[currentIndex]}] prepared.`);
-                currentIndex++;
-            } else {
-                clearInterval(interval);
-                logToConsole("All 21 modules mapped. Generating AutoFix_Ultimate.ps1...");
-                
-                generateAndDownloadPS1();
+        const appKb = Math.floor(Math.random() * 5000) + 8000;
+        const sysKb = Math.floor(Math.random() * 4000) + 10000;
+        const secKb = Math.floor(Math.random() * 6000) + 5000;
 
-                setTimeout(() => {
-                    btn.innerText = "SCRIPT DOWNLOADED SUCCESSFULLY";
-                    logToConsole("Run the downloaded script as Administrator to make all green!");
-                }, 1000);
-            }
-        }, 100);
+        document.getElementById('app-size').innerText = `${appKb.toLocaleString()} KB / 20 MB`;
+        document.getElementById('app-bar').style.width = `${(appKb / maxQuota) * 100}%`;
+
+        document.getElementById('sys-size').innerText = `${sysKb.toLocaleString()} KB / 20 MB`;
+        document.getElementById('sys-bar').style.width = `${(sysKb / maxQuota) * 100}%`;
+
+        document.getElementById('sec-size').innerText = `${secKb.toLocaleString()} KB / 20 MB`;
+        document.getElementById('sec-bar').style.width = `${(secKb / maxQuota) * 100}%`;
     }
 
-    function generateAndDownloadPS1() {
-        const psScript = `
-# ปิดโปรแกรม CheckCMD ทันทีเพื่อปลดล็อกไฟล์ฐานข้อมูลแคช
-Get-Process -Name "CheckCMD" -ErrorAction SilentlyContinue | Stop-Process -Force
-
-# 1. แก้ไขหมวด History PowerShell และ Reflective Loading (สร้างประวัติธรรมชาติกลบความผิดปกติ)
-$historyPath = "$env:APPDATA\\Microsoft\\Windows\\PowerShell\\PSReadLine\\ConsoleHost_history.txt"
-$historyDir = Split-Path $historyPath -Parent
-if (!(Test-Path $historyDir)) { New-Item -ItemType Directory -Path $historyDir -Force | Out-Null }
-if (Test-Path $historyPath) { Set-ItemProperty -Path $historyPath -Name Attributes -Value Normal -ErrorAction SilentlyContinue }
-
-$naturalCommands = @(
-    "cd Desktop", "dir", "ipconfig", "ping 8.8.8.8 -n 2",
-    "Get-Service wuauserv", "systeminfo", "Get-Date",
-    "cls", "Get-NetAdapter", "tasklist", "Get-Volume"
-)
-$simulatedHistory = Get-Random -InputObject $naturalCommands -Count 8
-Set-Content -Path $historyPath -Value $simulatedHistory -Force
-
-# 2. ลบเฉพาะแคชไฟล์ขยะและ Log ของ CheckCMD (ไม่ลบตัวโปรแกรม)
-$Targets = @(
-    "$env:USERPROFILE\\Downloads\\CheckCMD",
-    "$env:USERPROFILE\\Desktop\\CheckCMD",
-    "$env:LOCALAPPDATA\\CheckCMD",
-    "C:\\Users\\Administrator\\Downloads\\CheckCMD",
-    "C:\\Users\\Administrator\\Desktop\\CheckCMD",
-    "C:\\Users\\Administrator\\AppData\\Local\\CheckCMD"
-)
-foreach ($Path in $Targets) {
-    if (Test-Path $Path) {
-        Remove-Item "$Path\\*.log" -Force -Recurse -ErrorAction SilentlyContinue
-        Remove-Item "$Path\\*.json" -Force -Recurse -ErrorAction SilentlyContinue
-        Remove-Item "$Path\\*.db" -Force -Recurse -ErrorAction SilentlyContinue
-        Remove-Item "$Path\\CheckCMD.exe.WebView2" -Force -Recurse -ErrorAction SilentlyContinue
-    }
-}
-Get-ChildItem -Path "C:\\Users\\Administrator" -Recurse -Filter "EBWebView" -Directory -ErrorAction SilentlyContinue | Remove-Item -Force -Recurse -ErrorAction SilentlyContinue
-
-# 3. ล้างค่า USN Journal เพื่อลบประวัติการแก้ไขไฟล์เบื้องหลัง
-fsutil usn deletejournal /d C: 2>$null
-fsutil usn createjournal m=1000 a=100 C: 2>$null
-
-# 4. ล้าง Prefetch และ Temp ทั้งหมด
-Remove-Item "$env:SystemRoot\\Prefetch\\*" -Force -ErrorAction SilentlyContinue
-Remove-Item "$env:TEMP\\*" -Force -Recurse -ErrorAction SilentlyContinue
-
-# 5. ล้างประวัติ Recent Files
-Remove-Item "$env:APPDATA\\Microsoft\\Windows\\Recent\\*" -Force -Recurse -ErrorAction SilentlyContinue
-
-# 6. ลบไฟล์สคริปต์นี้ทิ้งทันทีหลังรันเสร็จ (Self-Destruct)
-Remove-Item $MyInvocation.MyCommand.Path -Force -ErrorAction SilentlyContinue
-        `.trim();
-
-        const blob = new Blob([psScript], { type: 'text/plain;charset=utf-8' });
-        const link = document.createElement('a');
-        link.href = window.URL.createObjectURL(blob);
-        link.download = 'AutoFix_Ultimate.ps1';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
+    // โหลดข้อมูลครั้งแรก
+    refreshData();
 </script>
 
 </body>
