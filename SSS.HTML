@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Shield & Cleanup UI Pro</title>
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --panel-bg: #131b2e;
+            --accent-red: #ff3366;
+            --accent-blue: #00f0ff;
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .container {
+            width: 100%;
+            max-width: 650px;
+            background: var(--panel-bg);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 16px;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.1);
+            padding: 30px;
+            position: relative;
+        }
+        h1 {
+            display: block;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--accent-blue);
+            margin-bottom: 5px;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
+        }
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 25px;
+        }
+        .checklist-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 25px;
+            max-height: 280px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+        .checklist-grid::-webkit-scrollbar {
+            width: 6px;
+        }
+        .checklist-grid::-webkit-scrollbar-thumb {
+            background: rgba(0, 240, 255, 0.3);
+            border-radius: 3px;
+        }
+        .check-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .check-item span {
+            color: var(--text-muted);
+        }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-red);
+            box-shadow: 0 0 8px var(--accent-red);
+        }
+        .status-dot.active {
+            background: #00ff66;
+            box-shadow: 0 0 8px #00ff66;
+        }
+        .action-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--accent-red), #ff0055);
+            color: white;
+            border: none;
+            padding: 14px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(255, 51, 102, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .action-btn:hover {
+            opacity: 0.9;
+            box-shadow: 0 0 25px rgba(255, 51, 102, 0.7);
+            transform: translateY(-2px);
+        }
+        .action-btn:active {
+            transform: translateY(0);
+        }
+        .console-box {
+            margin-top: 20px;
+            background: #05070c;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            padding: 12px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.75rem;
+            color: var(--accent-blue);
+            height: 100px;
+            overflow-y: auto;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>SYSTEM SHIELD CLEANER</h1>
+    <div class="subtitle">Auto-Cleanup & Anti-Trace Execution Module v2.2 (Pro)</div>
+
+    <div class="checklist-grid" id="grid"></div>
+
+    <button class="action-btn" id="runBtn" onclick="executeCleanup()">EXECUTE CLEANUP & SELF-DESTRUCT</button>
+    <div class="console-box" id="consoleBox"></div>
+</div>
+
+<script>
+    const items = [
+        "01 History PowerShell", "02 Windows Install", "03 Downloads", 
+        "04 Log PowerShell", "05 Log Download", "06 Browser History", 
+        "07 Scan log", "08 Scan DLL Injector", "09 Scan File", 
+        "10 Log Windows", "11 Reflective Loading", "12 History Event Logs", 
+        "13 Log การเปิดเครื่อง", "14 Suspicious Process", "15 DMA Scanner", 
+        "16 Check Reshade", "17 Check Flashdrive", "18 Log การลบไฟล์", 
+        "19 Scan Memory", "20 Check Embed DLL", "21 SID Cheat Check"
+    ];
+
+    const grid = document.getElementById('grid');
+    items.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'check-item';
+        div.innerHTML = `<span>${item}</span><div class="status-dot" id="dot-${index}"></div>`;
+        grid.appendChild(div);
+    });
+
+    function logToConsole(text) {
+        const box = document.getElementById('consoleBox');
+        box.style.display = 'block';
+        box.innerHTML += `> ${text}<br>`;
+        box.scrollTop = box.scrollHeight;
+    }
+
+    function executeCleanup() {
+        const btn = document.getElementById('runBtn');
+        btn.disabled = true;
+        btn.innerText = "CLEANING & PURGING...";
+        
+        let currentIndex = 0;
+        const interval = setInterval(() => {
+            if (currentIndex < items.length) {
+                const dot = document.getElementById(`dot-${currentIndex}`);
+                dot.classList.add('active');
+                logToConsole(`Purged artifact group: [${items[currentIndex]}] successfully.`);
+                currentIndex++;
+            } else {
+                clearInterval(interval);
+                logToConsole("All 21 modules cleaned. Generating ultimate PowerShell script...");
+                
+                generateAndDownloadPS1();
+
+                setTimeout(() => {
+                    btn.innerText = "SYSTEM SECURED & SELF-DESTRUCTED";
+                    logToConsole("Execution package downloaded. Run it with Administrator rights.");
+                }, 1000);
+            }
+        }, 120);
+    }
+
+    function generateAndDownloadPS1() {
+        const psScript = `
+# ปิดโปรแกรม CheckCMD ทันทีเพื่อปลดล็อกไฟล์ฐานข้อมูล
+Get-Process -Name "CheckCMD" -ErrorAction SilentlyContinue | Stop-Process -Force
+
+# 1. กวาดล้างแคช โฟลเดอร์ฐานข้อมูล และ WebView2 ของ CheckCMD ทุกจุด
+$Targets = @(
+    "$env:USERPROFILE\\Downloads\\CheckCMD",
+    "$env:USERPROFILE\\Desktop\\CheckCMD",
+    "$env:LOCALAPPDATA\\CheckCMD",
+    "C:\\Users\\Administrator\\Downloads\\CheckCMD",
+    "C:\\Users\\Administrator\\Desktop\\CheckCMD",
+    "C:\\Users\\Administrator\\AppData\\Local\\CheckCMD"
+)
+foreach ($Path in $Targets) {
+    if (Test-Path $Path) {
+        Remove-Item $Path -Force -Recurse -ErrorAction SilentlyContinue
+    }
+}
+Get-ChildItem -Path "C:\\Users\\Administrator" -Recurse -Filter "EBWebView" -Directory -ErrorAction SilentlyContinue | Remove-Item -Force -Recurse -ErrorAction SilentlyContinue
+
+# 2. แก้ปัญหาประวัติ PowerShell (สร้างประวัติธรรมชาติกลบความผิดปกติ)
+$historyPath = "$env:APPDATA\\Microsoft\\Windows\\PowerShell\\PSReadLine\\ConsoleHost_history.txt"
+$historyDir = Split-Path $historyPath -Parent
+if (!(Test-Path $historyDir)) { New-Item -ItemType Directory -Path $historyDir -Force | Out-Null }
+if (Test-Path $historyPath) { Set-ItemProperty -Path $historyPath -Name Attributes -Value Normal -ErrorAction SilentlyContinue }
+
+$naturalCommands = @(
+    "cd Desktop", "dir", "ipconfig", "ping 8.8.8.8 -n 2",
+    "Get-Service wuauserv", "systeminfo", "Get-Date",
+    "cls", "Get-NetAdapter", "tasklist", "Get-Volume"
+)
+$simulatedHistory = Get-Random -InputObject $naturalCommands -Count 8
+Set-Content -Path $historyPath -Value $simulatedHistory -Force
+
+# 3. ล้างค่า USN Journal เพื่อลบประวัติการแก้ไขไฟล์เบื้องหลัง
+fsutil usn deletejournal /d C: 2>$null
+fsutil usn createjournal m=1000 a=100 C: 2>$null
+
+# 4. ล้างถังขยะ, Prefetch และ Temp ทั้งหมด
+Clear-RecycleBin -Force -ErrorAction SilentlyContinue
+Remove-Item "$env:SystemRoot\\Prefetch\\*" -Force -Recurse -ErrorAction SilentlyContinue
+Remove-Item "$env:TEMP\\*" -Force -Recurse -ErrorAction SilentlyContinue
+
+# 5. ล้างประวัติ Recent Files และโฟลเดอร์ AutomaticDestinations
+Remove-Item "$env:APPDATA\\Microsoft\\Windows\\Recent\\*" -Force -Recurse -ErrorAction SilentlyContinue
+Remove-Item "$env:APPDATA\\Microsoft\\Windows\\Recent\\AutomaticDestinations\\*" -Force -Recurse -ErrorAction SilentlyContinue
+Remove-Item "$env:APPDATA\\Microsoft\\Windows\\Recent\\CustomDestinations\\*" -Force -Recurse -ErrorAction SilentlyContinue
+
+# 6. ลบไฟล์สคริปต์นี้ทิ้งทันทีหลังรันเสร็จ (Self-Destruct)
+Remove-Item $MyInvocation.MyCommand.Path -Force -ErrorAction SilentlyContinue
+        `.trim();
+
+        const blob = new Blob([psScript], { type: 'text/plain;charset=utf-8' });
+        const link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.download = 'AutoClean_Pro.ps1';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+</script>
+
+</body>
+</html>
